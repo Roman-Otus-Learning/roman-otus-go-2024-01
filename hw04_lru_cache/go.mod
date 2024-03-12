@@ -1,4 +1,4 @@
-module github.com/fixme_my_friend/hw04_lru_cache
+module github.com/Roman-Otus-Learning/roman-otus-go-2024-01/hw04_lru_cache
 
 go 1.19
 
