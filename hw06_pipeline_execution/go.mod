@@ -1,4 +1,4 @@
-module github.com/fixme_my_friend/hw06_pipeline_execution
+module github.com/Roman-Otus-Learning/roman-otus-go-2024-01/hw06_pipeline_execution
 
 go 1.19
 
