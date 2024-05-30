@@ -8,6 +8,12 @@ linters-settings:
   funlen:
     lines: 150
     statements: 80
+  depguard:
+    rules:
+      main:
+        allow:
+          - $gostd
+          - github.com
 
 issues:
   exclude-rules:
@@ -17,6 +23,7 @@ issues:
         - dupl
         - gocyclo
         - gosec
+        - lll
 
 linters:
   disable-all: true
