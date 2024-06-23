@@ -1,0 +1,7 @@
+log_level: 1
+database:
+  dsn: postgresql://calendar:calendar@localhost:5432/calendar
+  in_memory: false
+http:
+  host: ""
+  port: 8080
