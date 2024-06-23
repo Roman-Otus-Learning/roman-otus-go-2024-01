@@ -1,31 +1,61 @@
-package internalhttp
+package http
 
 import (
 	"context"
+	"net/http"
+	"sync"
+
+	"github.com/Roman-Otus-Learning/roman-otus-go-2024-01/hw12_13_14_15_calendar/internal/app"
+	"github.com/gorilla/mux"
+	"github.com/rs/zerolog/log"
 )
 
-type Server struct { // TODO
+type Server struct {
+	server *http.Server
+	events app.EventsUseCaseInterface
 }
 
-type Logger interface { // TODO
+func CreateHTTPServer(events app.EventsUseCaseInterface, addr string) *Server {
+	return &Server{
+		server: &http.Server{ //nolint:gosec
+			Addr:    addr,
+			Handler: loggingMiddleware(simpleHandler()),
+		},
+		events: events,
+	}
 }
 
-type Application interface { // TODO
+func (s *Server) Start(wg *sync.WaitGroup) {
+	go func() {
+		defer wg.Done()
+
+		log.Info().Msg("starting http server on " + s.server.Addr)
+
+		if err := s.server.ListenAndServe(); err != nil {
+			log.Error().Err(err).Send()
+		}
+	}()
 }
 
-func NewServer(logger Logger, app Application) *Server {
-	return &Server{}
+func (s *Server) Stop(ctx context.Context) {
+	log.Info().Msg("stopping http server")
+
+	if err := s.server.Shutdown(ctx); err != nil {
+		log.Error().Err(err).Send()
+	}
+
+	log.Info().Msg("http server stopped")
 }
 
-func (s *Server) Start(ctx context.Context) error {
-	// TODO
-	<-ctx.Done()
-	return nil
-}
+func simpleHandler() http.Handler {
+	router := mux.NewRouter()
 
-func (s *Server) Stop(ctx context.Context) error {
-	// TODO
-	return nil
-}
+	router.HandleFunc(
+		"/",
+		func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte("Hello, World"))
+		}).Methods("GET")
 
-// TODO
+	return router
+}
